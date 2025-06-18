@@ -1,0 +1,913 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnosing Dyslexia in Children via Eye-Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header */
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1rem 0;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: #4a5568;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover {
+            color: #667eea;
+        }
+
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 120px 0 80px;
+            margin-top: 80px;
+        }
+
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            font-weight: 700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Main Content */
+        .main-content {
+            background: white;
+            margin: -40px 20px 0;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .section {
+            padding: 4rem 3rem;
+        }
+
+        .section:nth-child(even) {
+            background: #f8fafc;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            color: #2d3748;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            display: block;
+            width: 80px;
+            height: 4px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            margin: 1rem auto;
+            border-radius: 2px;
+        }
+
+        /* Problem Section */
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 3rem;
+            margin-top: 3rem;
+        }
+
+        .problem-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .problem-card h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        /* Method Section */
+        .method-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+            margin-top: 3rem;
+        }
+
+        .method-image {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #e2e8f0, #cbd5e0);
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+            color: #4a5568;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-top: 2rem;
+        }
+
+        .features-list li {
+            background: #f7fafc;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            border-left: 4px solid #667eea;
+            border-radius: 0 8px 8px 0;
+        }
+
+        /* Results Section */
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .result-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .result-card:hover {
+            transform: scale(1.05);
+        }
+
+        .result-number {
+            font-size: 3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .result-label {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        /* Applications Section */
+        .applications-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .application-card {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            border: 2px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+
+        .application-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Demo Video Section */
+        .demo-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .video-wrapper {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            background: #000;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .video-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 450px;
+            background: linear-gradient(135deg, #2d3748, #4a5568);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .play-button {
+            width: 80px;
+            height: 80px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .play-button:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .play-button::after {
+            content: '';
+            width: 0;
+            height: 0;
+            border-left: 25px solid white;
+            border-top: 15px solid transparent;
+            border-bottom: 15px solid transparent;
+            margin-left: 5px;
+        }
+
+        /* Poster Section */
+        .poster-container {
+            text-align: center;
+            margin-top: 3rem;
+        }
+
+        .poster-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .poster-wrapper:hover {
+            transform: scale(1.02);
+        }
+
+        .poster-image {
+            width: 100%;
+            height: 600px;
+            background: linear-gradient(135deg, #f7fafc, #e2e8f0);
+            border-radius: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #4a5568;
+            font-size: 1.3rem;
+            border: 3px dashed #cbd5e0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .poster-image:hover {
+            border-color: #667eea;
+            background: linear-gradient(135deg, #f0f7ff, #e6f3ff);
+        }
+
+        .poster-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 15px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .download-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 12px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            transition: all 0.3s ease;
+        }
+
+        .download-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        /* Team Section */
+        .team-container {
+            margin-top: 3rem;
+        }
+
+        .advisor-section {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+
+        .advisor-card {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3rem;
+            border-radius: 25px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 20px 60px rgba(102, 126, 234, 0.3);
+            transition: transform 0.3s ease;
+        }
+
+        .advisor-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .advisor-image {
+            width: 120px;
+            height: 120px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 50%;
+            margin: 0 auto 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5rem;
+            color: white;
+            font-weight: bold;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .advisor-title {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0.5rem;
+        }
+
+        .advisor-name {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+        }
+
+        .advisor-department {
+            font-size: 1rem;
+            opacity: 0.8;
+        }
+
+        .team-members-section {
+            background: #f8fafc;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 3rem;
+        }
+
+        .team-members-title {
+            font-size: 1.2rem;
+            color: #4a5568;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .team-members-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .team-member {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border: 1px solid #e2e8f0;
+        }
+
+        .team-member:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.12);
+        }
+
+        .team-member-image {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #cbd5e0, #a0aec0);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: #4a5568;
+            font-weight: bold;
+        }
+
+        .team-member-name {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.3rem;
+        }
+
+        .team-member-id {
+            font-size: 0.9rem;
+            color: #667eea;
+            font-weight: 500;
+        }
+
+        .collaboration-section {
+            background: #f8fafc;
+            padding: 3rem;
+            border-radius: 20px;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background: #2d3748;
+            color: white;
+            text-align: center;
+            padding: 3rem 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero p {
+                font-size: 1.1rem;
+            }
+
+            .method-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .section {
+                padding: 3rem 2rem;
+            }
+
+            .main-content {
+                margin: -40px 10px 0;
+            }
+
+            .video-placeholder {
+                height: 300px;
+                font-size: 1rem;
+            }
+
+            .play-button {
+                width: 60px;
+                height: 60px;
+            }
+
+            .play-button::after {
+                border-left: 20px solid white;
+                border-top: 12px solid transparent;
+                border-bottom: 12px solid transparent;
+            }
+
+            .poster-image {
+                height: 400px;
+                font-size: 1.1rem;
+            }
+
+            .poster-icon {
+                width: 60px;
+                height: 60px;
+                font-size: 1.5rem;
+            }
+
+            .poster-wrapper {
+                padding: 1rem;
+            }
+
+            .advisor-card {
+                padding: 2rem;
+            }
+
+            .advisor-image {
+                width: 100px;
+                height: 100px;
+                font-size: 2rem;
+            }
+
+            .advisor-name {
+                font-size: 1.5rem;
+            }
+
+            .team-members-grid {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .team-member-image {
+                width: 70px;
+                height: 70px;
+                font-size: 1.3rem;
+            }
+
+            .collaboration-section {
+                padding: 2rem 1rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .section {
+            animation: fadeInUp 0.6s ease-out;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <nav class="container">
+            <div class="logo">DyslexiaAI Research</div>
+            <ul class="nav-links">
+                <li><a href="#problem">Problem</a></li>
+                <li><a href="#method">Method</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#results">Results</a></li>
+                <li><a href="#poster">Poster</a></li>
+                <li><a href="#applications">Applications</a></li>
+                <li><a href="#team">Team</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section class="hero">
+        <div class="container">
+            <h1>Diagnosing Dyslexia in Children via Eye-Tracking</h1>
+            <p>Revolutionary AI-powered approach using Operational Neural Networks to detect dyslexia through eye movement analysis</p>
+            <a href="#problem" class="cta-button">Explore Research</a>
+        </div>
+    </section>
+
+    <div class="main-content">
+        <section id="problem" class="section">
+            <div class="container">
+                <h2 class="section-title">The Problem</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #4a5568;">
+                    Dyslexia affects 3-7% of the population, but current diagnostic methods are time-consuming, subjective, and often inaccessible.
+                </p>
+                <div class="problem-grid">
+                    <div class="problem-card">
+                        <h3>Current Challenges</h3>
+                        <p>Traditional dyslexia diagnosis relies on extensive psychoeducational assessments that can take weeks or months to complete and require specialized experts.</p>
+                    </div>
+                    <div class="problem-card">
+                        <h3>Early Detection Critical</h3>
+                        <p>Early identification is crucial as undiagnosed dyslexia can negatively impact academic performance, self-esteem, and long-term educational outcomes.</p>
+                    </div>
+                    <div class="problem-card">
+                        <h3>Objective Measurement</h3>
+                        <p>Eye-tracking technology provides an objective window into reading behavior, capturing distinctive patterns that characterize dyslexic reading.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="method" class="section">
+            <div class="container">
+                <h2 class="section-title">Our Approach</h2>
+                <div class="method-container">
+                    <div>
+                        <h3 style="color: #667eea; margin-bottom: 1rem; font-size: 1.5rem;">Eye-Tracking & AI Integration</h3>
+                        <p style="margin-bottom: 1.5rem;">
+                            We developed a novel dyslexia detection system using high-precision eye-tracking data processed through Operational Neural Networks (ONNs), which offer superior flexibility compared to traditional CNNs.
+                        </p>
+                        <ul class="features-list">
+                            <li><strong>163 participants:</strong> 2nd and 3rd grade children</li>
+                            <li><strong>High-resolution tracking:</strong> ≥120 Hz sampling rate</li>
+                            <li><strong>Dual reading tasks:</strong> Didactic and narrative texts</li>
+                            <li><strong>9 key features:</strong> Spatiotemporal and efficiency metrics</li>
+                            <li><strong>Advanced AI:</strong> Operational Neural Networks</li>
+                        </ul>
+                    </div>
+                    <div class="method-image">
+                        <img src="337_heatmap.png" alt="Dyslexia Detection Research Poster" 
+                             style="width: 100%; height: auto; border-radius: 15px; cursor: pointer;"
+                             onclick="window.open(this.src, '_blank')">
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="demo" class="section">
+            <div class="container">
+                <h2 class="section-title">System Demonstration</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #4a5568;">
+                    Watch our dyslexia detection system in action - from eye-tracking data collection to real-time AI analysis.
+                </p>
+                <div class="demo-container">
+                    <div class="video-wrapper">
+
+                        <video controls style="width: 100%; height: 100%;">
+                            <source src="Adsız tasarım.mp4" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                        
+                    </div>
+                    <div style="margin-top: 2rem; max-width: 600px; margin-left: auto; margin-right: auto;">
+                        <h3 style="color: #667eea; margin-bottom: 1rem;">What You'll See</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 1rem; text-align: left;">
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px;">
+                                <strong>Eye-tracking Setup:</strong> Real-time gaze data collection during reading tasks
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px;">
+                                <strong>AI Processing:</strong> Live analysis using our Operational Neural Network
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px;">
+                                <strong>Results Display:</strong> Instant classification with confidence scores
+                            </div>
+                            <div style="background: #f8fafc; padding: 1rem; border-radius: 10px;">
+                                <strong>Feature Analysis:</strong> Visualization of key reading behavior patterns
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="results" class="section">
+            <div class="container">
+                <h2 class="section-title">Outstanding Results</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #4a5568;">
+                    Our ONN model achieved state-of-the-art performance, surpassing traditional machine learning approaches.
+                </p>
+                <div class="results-grid">
+                    <div class="result-card">
+                        <div class="result-number">93.55%</div>
+                        <div class="result-label">Classification Accuracy</div>
+                    </div>
+                    <div class="result-card">
+                        <div class="result-number">0.9375</div>
+                        <div class="result-label">F1-Score</div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 4rem; background: #f8fafc; padding: 2rem; border-radius: 15px;">
+                    <h3 style="color: #667eea; margin-bottom: 1rem;">Key Findings</h3>
+                    <p><strong>Distinctive Eye Movement Patterns:</strong> Children with dyslexia showed longer fixations (200-300ms+), more frequent regressions (backward eye movements), and shorter saccades compared to typical readers.</p>
+                    <br>
+                    <p><strong>Feature Importance:</strong> The most predictive features included total reading time, gaze deviation patterns, regression count, and saccade characteristics - all capturing the increased cognitive effort in dyslexic reading.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="poster" class="section">
+            <div class="container">
+                <h2 class="section-title">Research Poster</h2>
+                <p style="text-align: center; font-size: 1.2rem; margin-bottom: 3rem; color: #4a5568;">
+                    Comprehensive overview of our methodology, results, and implications in academic poster format.
+                </p>
+                <div class="poster-container">
+                    <div class="poster-wrapper">
+
+                        <img src="WhatsApp Image 2025-06-18 at 16.27.05.jpeg" alt="Dyslexia Detection Research Poster" 
+                             style="width: 100%; height: auto; border-radius: 15px; cursor: pointer;"
+                             onclick="window.open(this.src, '_blank')">
+
+                    </div>
+                    
+                    <div style="margin-top: 3rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 2rem;">
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 15px; border: 1px solid #e2e8f0;">
+                            <h3 style="color: #667eea; margin-bottom: 1rem;">📋 Abstract & Introduction</h3>
+                            <p>Problem statement, literature review, and research objectives clearly presented with visual hierarchy.</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 15px; border: 1px solid #e2e8f0;">
+                            <h3 style="color: #667eea; margin-bottom: 1rem;">🔬 Methodology</h3>
+                            <p>Detailed explanation of our ONN architecture, eye-tracking setup, and data processing pipeline.</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 15px; border: 1px solid #e2e8f0;">
+                            <h3 style="color: #667eea; margin-bottom: 1rem;">📊 Results & Analysis</h3>
+                            <p>Performance metrics, comparison studies, and feature importance analysis with clear visualizations.</p>
+                        </div>
+                        <div style="background: #f8fafc; padding: 2rem; border-radius: 15px; border: 1px solid #e2e8f0;">
+                            <h3 style="color: #667eea; margin-bottom: 1rem;">🎯 Conclusions</h3>
+                            <p>Key findings, clinical implications, and future research directions for the field.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="applications" class="section">
+            <div class="container">
+                <h2 class="section-title">Real-World Impact</h2>
+                <div class="applications-grid">
+                    <div class="application-card">
+                        <h3>Educational Screening</h3>
+                        <p>Fast, objective screening in schools for early identification of at-risk students, enabling timely intervention and support.</p>
+                    </div>
+                    <div class="application-card">
+                        <h3>Clinical Diagnosis</h3>
+                        <p>Supporting clinical professionals with data-driven diagnostic tools that complement traditional assessment methods.</p>
+                    </div>
+                    <div class="application-card">
+                        <h3>Intervention Monitoring</h3>
+                        <p>Tracking reading development and intervention effectiveness over time through longitudinal eye-tracking analysis.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="team" class="section">
+            <div class="container">
+                <h2 class="section-title">Research Team</h2>
+                <div class="team-container">
+                    <!-- Team Members Section -->
+                    <div class="team-members-section">
+                        <div class="team-members-title">Research Team Members</div>
+                        <div class="team-members-grid">
+                            <div class="team-member">
+                                <div class="team-member-image">SİÖ</div>
+                                <div class="team-member-name">Selin İrem Özdoğan</div>
+                                <div class="team-member-id">2210765013</div>
+                            </div>
+                            <div class="team-member">
+                                <div class="team-member-image">MA</div>
+                                <div class="team-member-name">Murathan Akgenç</div>
+                                <div class="team-member-id">2200765026</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Research Advisor - Similar Style -->
+                    <div class="team-members-section">
+                        <div class="team-members-title">Research Advisor</div>
+                        <div class="team-members-grid" style="max-width: 400px; margin: 0 auto;">
+                            <div class="team-member">
+                                <div class="team-member-image">AK</div>
+                                <div class="team-member-name">Assoc. Prof. Ali Seydi Keçeli</div>
+                                <div class="team-member-id">Computer Engineering Department</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Collaboration Section -->
+                    <div class="collaboration-section">
+                        <h3 style="color: #667eea; margin-bottom: 1.5rem; font-size: 1.5rem;">Collaborative Research</h3>
+                        <p style="max-width: 800px; margin: 0 auto; font-size: 1.1rem; color: #4a5568; line-height: 1.8;">
+                            This research was conducted in collaboration with <strong>Eyesoft</strong>, specialized educational institutions, and licensed educational psychologists. We extend our sincere gratitude to <strong>Prof. Dr. Cevriye Ergül</strong> for her invaluable contribution in administering standardized assessments and preparing the reading materials used during data acquisition.
+                        </p>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 2rem;">
+                            <div style="background: white; padding: 1.5rem; border-radius: 15px; border-left: 4px solid #667eea;">
+                                <strong style="color: #667eea;">Industry Partnership</strong><br>
+                                Eyesoft - Eye-tracking technology and systems
+                            </div>
+                            <div style="background: white; padding: 1.5rem; border-radius: 15px; border-left: 4px solid #667eea;">
+                                <strong style="color: #667eea;">Academic Supervision</strong><br>
+                                Prof. Dr. Cevriye Ergül - Assessment and materials
+                            </div>
+                            <div style="background: white; padding: 1.5rem; border-radius: 15px; border-left: 4px solid #667eea;">
+                                <strong style="color: #667eea;">Educational Institutions</strong><br>
+                                Local schools - Participant recruitment and testing
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <footer>
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Research Impact</h3>
+                    <p>Contributing to early dyslexia detection and improved educational outcomes for children worldwide.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Technology</h3>
+                    <p>Operational Neural Networks, High-precision Eye-tracking, Advanced Feature Engineering</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Ethics</h3>
+                    <p>All procedures approved by Turkish Ministry of National Education with informed parental consent.</p>
+                </div>
+            </div>
+            <div style="border-top: 1px solid #4a5568; padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2024 Dyslexia Detection Research. Under review as a conference paper at ICLR 2021.</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>
